@@ -1,0 +1,29 @@
+<ehcache>
+
+    <!--默认临时文件的位置  可以自己设置位置-->
+    <diskStore path="java.io.tmpdir"/>
+
+    <!--
+    maxElementsInMemory ：在内存中最大的对象存储量
+    eternal：是否在内存中永远不销毁
+    timeToIdleSeconds：在缓存中闲置多少时间后销毁    s秒单位
+    timeToLiveSeconds：在缓存中存活多少时间后销毁    s秒单位
+    overflowToDisk：当缓存对象满的时候是否保存到磁盘中
+    diskPersistent：磁盘中的文件是否永久保存
+    diskExpiryThreadIntervalSeconds：检测线程运行的时间间隔
+    memoryStoreEvictionPolicy：缓存清理策略
+       FIFO： 先进先出
+       LRU： 最近最少使用 ，时间戳
+       LFU: 最少使用，命中率 hit
+    -->
+    <defaultCache
+            maxElementsInMemory="10000"
+            eternal="false"
+            timeToIdleSeconds="120"
+            timeToLiveSeconds="120"
+            overflowToDisk="true"
+            diskPersistent="false"
+            diskExpiryThreadIntervalSeconds="120"
+            memoryStoreEvictionPolicy="LRU"
+            />
+</ehcache>

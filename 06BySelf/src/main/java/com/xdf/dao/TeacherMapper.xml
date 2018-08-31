@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace务必和对应接口的全类名一致 -->
+<mapper namespace="com.xdf.dao.TeacherMapper">
+
+    <!--根据学生编号 查询出学生和对应老师的信息-->
+    <select id="findTeachersByTid"  resultMap="myTeacherMap">
+        SELECT  id,name from teacher
+        <where>
+            tid=#{xxx}
+        </where>
+    </select>
+
+    <!--
+    SELECT id,name from teacher WHERE tid=?   1
+     得到的结果是两条数据  id=3  id=4,
+     把id=3和id=4分别作为tid再次查询
+     SELECT id,name from teacher WHERE tid=?   3
+     SELECT id,name from teacher WHERE tid=?   4
+     得到的结果是两条数据  id=5  id=6,
+     把id=5  id=6,分别作为tid再次查询
+     SELECT id,name from teacher WHERE tid=?   5
+     SELECT id,name from teacher WHERE tid=?  6
+    -->
+
+    <resultMap id="myTeacherMap" type="Teacher">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <!--一个导师对应多个老师-->
+        <collection property="teachers" ofType="Teacher" select="findTeachersByTid"
+                    column="id"/>
+    </resultMap>
+
+</mapper>

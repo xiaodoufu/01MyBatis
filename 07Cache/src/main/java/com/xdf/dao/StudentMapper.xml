@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace务必和对应接口的全类名一致 -->
+<mapper namespace="com.xdf.dao.StudentMapper">
+
+    <!--开启2级缓存-->
+     <cache type="org.mybatis.caches.ehcache.LoggingEhcache"
+        readOnly="true"  flushInterval="5000"/>
+
+    <!--根据学生编号 查询出指定学生的信息
+        验证1级缓存的存在
+        不用我们做任何配置，mybatis自带，不允许删除
+        如果想把查询的数据放进2级缓存  务必增加一个属性useCache="true"
+        -->
+    <select id="findStudentBySid" resultType="Student" useCache="true">
+        select sid,sname,age from student
+        <where>
+            sid=#{xxx}
+        </where>
+    </select>
+
+
+    <!--修改指定学生信息
+        验证增删改是否会清空缓存
+        flushCache="false" 不会清空缓存 不推荐
+    -->
+   <update id="updateStudent" parameterType="Student" flushCache="false">
+       update student set sname=#{sName}
+       <where>
+               sid=#{sId}
+       </where>
+   </update>
+
+    <!--分页查询-->
+    <select id="findStudentsByPage"  resultType="Student">
+         select sid,sname,age from student
+    </select>
+
+
+      <!--调用存储过程-->
+   <select id="selectNameByProcedure"  parameterType="Student" statementType="CALLABLE" useCache="false">
+       <![CDATA[
+         call myProc(
+          #{sId,mode=IN,jdbcType=INTEGER},
+          #{sName,mode=OUT,jdbcType=VARCHAR}
+         );
+       ]]>
+   </select>
+
+</mapper>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration><!--根节点  配置信息-->
+
+    <!--加载连接数据库四要素的配置文件-->
+    <properties resource="jdbc.properties"/>
+
+    <!--设置别名-->
+   <typeAliases>
+       <!--所有com.xdf.pojo包下的所有类的别名都是类名小写或大写-->
+        <package name="com.xdf.pojo"/>
+   </typeAliases>
+
+    <!--设置mybatis的运行环境-->
+    <environments default="mysql"><!--default找到环境的id 只能用一个-->
+        <environment id="mysql"><!--可以定义多个环境-->
+            <transactionManager type="JDBC"/><!--后续事务的管理 统一交给spring容器-->
+            <dataSource type="POOLED"> <!--数据源  Tomcat:JNDI  mybatis:POOLED-->
+                <!--name属性值 不允许更改   value就是我们jdbc.properties文件中的key-->
+                <property name="driver" value="${jdbc.driver}"/>
+                <property name="url" value="${jdbc.url}"/>
+                <property name="username" value="${jdbc.username}"/>
+                <property name="password" value="${jdbc.password}"/>
+            </dataSource>
+        </environment>
+    </environments>
+
+    <!--管理所有的mapper.xml文件-->
+   <mappers>
+       <mapper resource="com/xdf/dao/UserMapper.xml"/>
+   </mappers>
+</configuration>

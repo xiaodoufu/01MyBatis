@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace务必和对应接口的全类名一致 -->
+<mapper namespace="com.xdf.dao.UserMapper">
+
+    <!--新增操作  id务必和接口中的方法名一致
+    parameterType:
+     如果没有在核心配置文件中，设置别名，那么必须使用完整限定名
+    注意点:
+       如果参数是一个实体类，那么我们在赋值的时候，务必使用类中的属性名！
+    /*使用主键回填
+       01. SELECT @@identity
+       02. SELECT LAST_INSERT_ID()   都可以获取最后插入数据的主键id
+       resultType="int"  主键的返回值类型，务必要和数据库中的数据类型匹配
+       keyProperty="id"  返回的结果赋值给实体类中的属性
+       order="AFTER"     在什么时间点获取id，肯定是新增的数据之后
+    */
+    -->
+    <insert id="addUser"  useGeneratedKeys="true"  keyProperty="id" parameterType="Users">
+        INSERT INTO USER(name,PASSWORD) VALUES(#{userName},#{password})
+    </insert>
+
+    <!--删除  不知道参数的类型或者确定类型，但是只有一个参数
+              这时候我们#｛随意写｝   只是一个占位符-->
+    <delete id="deleteUser">
+       DELETE FROM USER WHERE id=#{xxx}
+    </delete>
+
+    <!--修改-->
+   <update id="updateUser" parameterType="Users">
+         UPDATE USER SET name=#{userName},PASSWORD=#{password} WHERE id=#{id}
+   </update>
+
+    <!--查询  -->
+   <select id="findUsersById"  resultMap="userMap">
+       /*使用sql片段*/
+       <include refid="selectFromUser"/>
+        WHERE id=#{xxx}
+   </select>
+
+    <!--字段和属性名称不一致
+     01.使用别名    name as userName
+     02.使用resultMap  推荐使用-->
+    <resultMap id="userMap" type="Users">
+        <id property="id" column="id"/> <!--主键-->
+        <result property="userName" column="name"/><!--普通的属性-->
+        <result property="password" column="password"/>
+    </resultMap>
+
+
+    <!--查询 返回list集合
+      如果我们数据库中的字段名称和实体类中的属性名称对应==》resultType
+      如果字段和属性名称不一致？  ==》resultMap
+    -->
+   <select id="findAllUsers" resultMap="userMap" >
+        SELECT id,name,PASSWORD FROM USER
+   </select>
+
+
+  <!--sql片段  便于sql的管理和重复使用-->
+ <sql id="selectFromUser">
+     SELECT id,name,PASSWORD FROM USER
+ </sql>
+
+
+
+    <!-- 传递多个参数的时候  #｛写什么？？？｝
+       01.使用索引  /*WHERE `name`=#{0} AND `password`=#{1}*/
+       02.在参数中使用@Param("参数名称")
+       -->
+    <select id="findOneByTwoCondition" resultMap="userMap">
+       <include refid="selectFromUser"/>
+         WHERE `name`=#{myName} AND `password`=#{myPwd}
+    </select>
+    <!--参数是map   value值是普通字段的使用  #{key}
+     WHERE `name`=#{myName} AND `password`=#{myPwd}
+       value值是一个对象  #{key.属性}-->
+    <select id="findOneByMap" resultMap="userMap">
+       <include refid="selectFromUser"/>
+        WHERE `name`=#{user.userName} AND `password`=#{user.password}
+    </select>
+</mapper>

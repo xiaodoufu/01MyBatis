@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace务必和对应接口的全类名一致 -->
+<mapper namespace="com.xdf.dao.StudentMapper">
+
+    <!--根据学生编号 查询出学生和对应老师的信息-->
+    <select id="findStudentBySid"  resultMap="myStudentMap">
+        SELECT s.sid,s.sname,s.age,t.id,t.name
+        FROM student s,teacher t,middle m
+        WHERE s.`sid`=m.`sid`
+        AND m.`tid`=t.`id`
+        AND s.`sid`=#{xxx}
+    </select>
+
+
+    <resultMap id="myStudentMap" type="Student">
+        <id property="sId"  column="sId"/>
+        <result property="sName" column="sName"/>
+        <result property="age" column="age"/>
+        <!--一个学生对应多个老师-->
+        <collection property="teachers" ofType="Teacher">
+            <id property="id"  column="id"/>
+            <result property="name" column="name"/>
+        </collection>
+    </resultMap>
+
+
+    <!--根据老师编号 查询出老师和对应学生的信息-->
+    <select id="findTeacherByid"  resultMap="myTeacherMap">
+        SELECT s.sid,s.sname,s.age,t.id,t.name
+        FROM student s,teacher t,middle m
+        WHERE s.`sid`=m.`sid`
+        AND m.`tid`=t.`id`
+        AND t.`id`=#{xxx}
+    </select>
+
+
+    <resultMap id="myTeacherMap" type="Teacher">
+        <id property="id"  column="id"/>
+        <result property="name" column="name"/>
+        <!--一个老师对应多个学生-->
+        <collection property="students" ofType="Student">
+            <id property="sId"  column="sId"/>
+            <result property="sName" column="sName"/>
+            <result property="age" column="age"/>
+        </collection>
+    </resultMap>
+
+</mapper>

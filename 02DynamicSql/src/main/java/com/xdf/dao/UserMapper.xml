@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace务必和对应接口的全类名一致 -->
+<mapper namespace="com.xdf.dao.UserMapper">
+
+    <!--属性名和字段名称的映射-->
+    <resultMap id="myUserMap" type="Users">
+        <id property="id" column="id"/>
+        <result property="userName" column="name"/>
+        <result property="password" column="password"/>
+    </resultMap>
+
+    <!--if可以匹配多次
+     /* if中test书写的是属性值*/
+     /*if节点中书写的字段名*/-->
+    <select id="findUsersByCondition" parameterType="Users" resultMap="myUserMap">
+        select id,name,password from  USER
+        /*
+        prefix :在trim标签之前拼接的sql关键字
+        suffix :在trim标签之后拼接的sql关键字
+        prefixOverrides ：清除sql语句前的标记
+        suffixOverrides ：清除sql语句后的标记
+         */
+           <trim prefix="where" prefixOverrides="and | or">
+               <if test="userName!=null and userName!=''">
+                   and name like concat('%',#{userName},'%')
+               </if>
+               <if test="password!=null and password!=''">
+                   and password=#{password}
+               </if>
+           </trim>
+    </select><!-- and id=#{id}  /*必须执行  因为没有在if中*/-->
+
+
+    <update id="updateBySet" parameterType="Users">
+        update user
+          <trim prefix="set" suffixOverrides=",">
+            <if test="userName!=null and userName!=''">
+                name=#{userName},
+            </if>
+            <if test="password!=null and password!=''">
+                password=#{password},
+            </if>
+          </trim>
+        <where>
+            id=#{id}
+        </where>
+    </update>
+
+
+
+    <select id="selectByChoose" parameterType="Users" resultMap="myUserMap">
+        SELECT  id,name,password from USER
+        <where>
+              <choose>
+                    <when test="userName!=null and userName!=''">
+                        and name like concat('%',#{userName},'%')
+                    </when>
+                    <when test="password!=null and password!=''">
+                        and password=#{password}
+                    </when>
+                    <otherwise>
+                        id=#{id}
+                    </otherwise>
+              </choose>
+        </where>
+    </select>
+
+    <!--遍历数组   array -->
+    <select id="selectByArray" resultMap="myUserMap">
+       <include refid="selectAllColumn"/>
+        <where>
+            <if test="array.length>0">
+                id IN
+                <foreach collection="array" open="(" close=")" separator="," item="myId">
+                     #{myId}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+
+    <!--list 集合中是单一类型-->
+    <select id="selectByList" resultMap="myUserMap">
+        <include refid="selectAllColumn"/>
+        <where>
+            <if test="list.size>0">
+                id in
+                <foreach collection="list" open="(" close=")" separator="," item="myId">
+                    #{myId}
+                </foreach>
+            </if>
+        </where>
+    </select>
+    <!--list 集合中是对象类型   #{user.id}是属性名称-->
+    <select id="selectByListUser" resultMap="myUserMap">
+        <include refid="selectAllColumn"/>
+        <where>
+            <if test="list.size>0">
+                id in
+                <foreach collection="list" open="(" close=")" separator="," item="user">
+                    #{user.id}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+
+
+
+      <!--新增多个对象-->
+     <insert id="insertManyUsers">
+          INSERT  into user(name,password) VALUES
+          <foreach collection="list" item="user"  separator=",">
+              (#{user.userName},#{user.password})
+          </foreach>
+     </insert>
+
+
+    <!--
+    01.获取key   #{myKey}  把key作为参数
+    02.获取value  #{myMap[${myKey}]} 把value作为参数            -->
+    <select id="selectByMap" resultMap="myUserMap">
+        <include refid="selectAllColumn"/>
+        <where>
+              <if test="myMap.keys.size>0">
+                   id  IN
+                  <foreach collection="myMap.keys" item="myKey" open="(" close=")" separator=",">
+                              #{myMap[${myKey}]}
+                  </foreach>
+              </if>
+        </where>
+    </select>
+
+
+
+    <!--遍历map集合   value是一个对象
+     myMap是map集合的名称
+     ${myKey}是map的key
+     #{myMap[${myKey}]}是map的key对应的value 是一个对象
+     #{myMap[${myKey}].id} 是一个对象的属性
+      -->
+    <select id="selectByMapUser" resultMap="myUserMap">
+        <include refid="selectAllColumn"/>
+        <where>
+              <if test="myMap.keys.size>0">
+                   id  IN
+                  <foreach collection="myMap.keys" item="myKey" open="(" close=")" separator=",">
+                              #{myMap[${myKey}].id}
+                  </foreach>
+              </if>
+        </where>
+    </select>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ <sql id="selectAllColumn">
+     SELECT id,NAME,PASSWORD FROM USER
+ </sql>
+
+
+
+
+
+
+</mapper>

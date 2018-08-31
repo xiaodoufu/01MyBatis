@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace务必和对应接口的全类名一致 -->
+<mapper namespace="com.xdf.dao.CountryMapper">
+
+   <!--01.先根据省会id查询出对应的省会-->
+    <select id="selectProvincialByPid"  resultMap="myProvincialMap">
+        select pid,pname,countryid from provincial
+        <where>
+          pId=#{xxx}
+        </where>
+    </select>
+   <!--02.根据省会中的countryid查询出对应的国家-->
+    <select id="selectCountryByCid"  resultType="Country">
+        select cid,cname from country
+        <where>
+         cId=#{xxx}
+        </where>
+    </select>
+
+    <resultMap id="myProvincialMap" type="Provincial">
+        <id property="pId" column="pid"/>
+        <result property="pName" column="pname"/>
+        <!--多个省会对应一个国家   域属于-->
+        <association property="country" javaType="Country" select="selectCountryByCid"
+              column="countryid"/>
+    </resultMap>
+
+</mapper>

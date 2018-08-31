@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="01MyBatisBase" />
+        <module name="03RelationShip" />
+        <module name="04ManyToOne" />
+        <module name="05ManyToMany" />
+        <module name="06BySelf" />
+        <module name="07Cache" />
+        <module name="_02DynamicSql" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="01MyBatisBase" target="1.7" />
+      <module name="03RelationShip" target="1.7" />
+      <module name="04ManyToOne" target="1.7" />
+      <module name="05ManyToMany" target="1.7" />
+      <module name="06BySelf" target="1.7" />
+      <module name="07Cache" target="1.7" />
+      <module name="_02DynamicSql" target="1.7" />
+      <module name="MyBatis" target="1.7" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

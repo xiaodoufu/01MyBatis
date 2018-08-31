@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace务必和对应接口的全类名一致 -->
+<mapper namespace="com.xdf.dao.CountryMapper">
+
+  <!--根据国家ID查询国家信息和对应的省会信息-->
+    <select id="selectCountryByCid" resultMap="myCountryMap">
+      SELECT cid,cname,pid,pname FROM country c,provincial p
+      <where>
+          c.`cid`=p.`countryid` AND c.`cid`=#{xxx}
+      </where>
+    </select>
+
+    <!--创建country的map映射-->
+    <resultMap id="myCountryMap" type="Country">
+        <id property="cId" column="cid"/>
+        <result property="cName" column="cname"/>
+        <!--集合属性的赋值
+         provincials：集合属性名称
+         ofType：集合中元素的类型，因为我们设置了简写类名，所以直接写类名
+        -->
+        <collection property="provincials" ofType="Provincial">
+            <id property="pId" column="pid"/>
+            <result property="pName" column="pname"/>
+        </collection>
+    </resultMap>
+
+</mapper>
